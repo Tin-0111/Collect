@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>설명 팝업 사이트</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f9f9f9;
+      font-family: Arial, sans-serif;
+    }
+
+    .image-button {
+      width: 180px;
+      height: 180px;
+      border-radius: 20px;
+      border: 3px solid #bbb;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .image-button:hover {
+      transform: scale(1.05);
+    }
+
+    .image-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 100;
+    }
+
+    .popup p {
+      margin: 0;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      z-index: 99;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 이미지 버튼 -->
+  <div class="image-button" onclick="showPopup()">
+    <img src="https://via.placeholder.com/180x180.png?text=클릭" alt="버튼">
+  </div>
+
+  <!-- 어두운 배경 -->
+  <div class="overlay" id="overlay" onclick="hidePopup()"></div>
+
+  <!-- 팝업 창 -->
+  <div class="popup" id="popup">
+    <p>이것은 설명 창입니다!<br>버튼을 눌러 나타났어요.</p>
+  </div>
+
+  <script>
+    function showPopup() {
+      document.getElementById('popup').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    }
+
+    function hidePopup() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
