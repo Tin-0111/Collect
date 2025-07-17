@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>태그 필터 + 팝업 + 뒤로가기</title>
+  <title>컬렉정보</title>
   <style>
     body {
       margin: 0;
@@ -45,8 +45,9 @@
       transition: background-color 0.2s ease;
     }
 
-    .category-buttons button:hover {
-      background-color: #bbb;
+    .category-buttons button.selected {
+      background-color: #888;
+      color: white;
     }
 
     .button-grid {
@@ -80,7 +81,6 @@
       display: none;
     }
 
-    /* 팝업 창 스타일 */
     .popup {
       position: fixed;
       top: 50%;
@@ -107,18 +107,17 @@
 </head>
 <body>
 
-  <!-- 🔙 뒤로가기 버튼 -->
   <button class="back-button" onclick="history.back()">← 뒤로가기</button>
 
-  <!-- 카테고리 필터 -->
+  <!-- ✅ 중복 필터 버튼 -->
   <div class="category-buttons">
-    <button onclick="filterButtons('all')">전체</button>
-    <button onclick="filterButtons('빨강')">빨강</button>
-    <button onclick="filterButtons('파랑')">파랑</button>
-    <button onclick="filterButtons('초록')">초록</button>
+    <button onclick="toggleTag('빨강')" id="tag-빨강">빨강</button>
+    <button onclick="toggleTag('파랑')" id="tag-파랑">파랑</button>
+    <button onclick="toggleTag('초록')" id="tag-초록">초록</button>
+    <button onclick="clearTags()">초기화</button>
   </div>
 
-  <!-- 이미지 버튼 목록 -->
+  <!-- 이미지 버튼 -->
   <div class="button-grid">
     <div class="image-button" onclick="showPopup('이건 빨강입니다!')" data-tag="빨강">
       <img src="https://via.placeholder.com/180x180/ff4444/ffffff?text=빨강" alt="빨강 버튼">
@@ -134,29 +133,48 @@
     </div>
   </div>
 
-  <!-- 팝업 설명 -->
+  <!-- 팝업 -->
   <div class="overlay" id="overlay" onclick="hidePopup()"></div>
   <div class="popup" id="popup">
     <p id="popup-text">이것은 설명입니다.</p>
   </div>
 
-  <!-- 필터 기능 -->
+  <!-- ✅ 스크립트 -->
   <script>
-    function filterButtons(tag) {
+    const selectedTags = new Set();
+
+    function toggleTag(tag) {
+      const btn = document.getElementById(`tag-${tag}`);
+      if (selectedTags.has(tag)) {
+        selectedTags.delete(tag);
+        btn.classList.remove('selected');
+      } else {
+        selectedTags.add(tag);
+        btn.classList.add('selected');
+      }
+      updateVisibility();
+    }
+
+    function clearTags() {
+      selectedTags.clear();
+      document.querySelectorAll('.category-buttons button').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      updateVisibility();
+    }
+
+    function updateVisibility() {
       const buttons = document.querySelectorAll('.image-button');
       buttons.forEach(btn => {
-        const btnTag = btn.getAttribute('data-tag');
-        if (tag === 'all' || btnTag === tag) {
+        const tag = btn.getAttribute('data-tag');
+        if (selectedTags.size === 0 || selectedTags.has(tag)) {
           btn.classList.remove('hidden');
         } else {
           btn.classList.add('hidden');
         }
       });
     }
-  </script>
 
-  <!-- 팝업 기능 -->
-  <script>
     function showPopup(text) {
       document.getElementById('popup-text').innerHTML = text;
       document.getElementById('popup').style.display = 'block';
