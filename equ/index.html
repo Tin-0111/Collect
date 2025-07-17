@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>태그 필터 + 뒤로가기 버튼</title>
+  <title>태그 필터 + 팝업 + 뒤로가기</title>
   <style>
     body {
       margin: 0;
@@ -12,7 +12,6 @@
       text-align: center;
     }
 
-    /* 뒤로가기 버튼 */
     .back-button {
       position: fixed;
       top: 20px;
@@ -80,6 +79,30 @@
     .hidden {
       display: none;
     }
+
+    /* 팝업 창 스타일 */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      z-index: 1000;
+      display: none;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0,0,0,0.5);
+      display: none;
+      z-index: 999;
+    }
   </style>
 </head>
 <body>
@@ -87,7 +110,7 @@
   <!-- 🔙 뒤로가기 버튼 -->
   <button class="back-button" onclick="history.back()">← 뒤로가기</button>
 
-  <!-- 카테고리 필터 버튼 -->
+  <!-- 카테고리 필터 -->
   <div class="category-buttons">
     <button onclick="filterButtons('all')">전체</button>
     <button onclick="filterButtons('빨강')">빨강</button>
@@ -97,26 +120,27 @@
 
   <!-- 이미지 버튼 목록 -->
   <div class="button-grid">
-    <div class="image-button" onclick="showPopup()" data-tag="빨강">
+    <div class="image-button" onclick="showPopup('이건 빨강입니다!')" data-tag="빨강">
       <img src="https://via.placeholder.com/180x180/ff4444/ffffff?text=빨강" alt="빨강 버튼">
     </div>
-    <div class="image-button" data-tag="파랑">
+    <div class="image-button" onclick="showPopup('이건 파랑입니다!')" data-tag="파랑">
       <img src="https://via.placeholder.com/180x180/448aff/ffffff?text=파랑" alt="파랑 버튼">
     </div>
-    <div class="image-button" data-tag="초록">
+    <div class="image-button" onclick="showPopup('이건 초록입니다!')" data-tag="초록">
       <img src="https://via.placeholder.com/180x180/44ff44/ffffff?text=초록" alt="초록 버튼">
     </div>
-    <div class="image-button" data-tag="빨강">
+    <div class="image-button" onclick="showPopup('이건 또 다른 빨강입니다!')" data-tag="빨강">
       <img src="https://via.placeholder.com/180x180/cc0000/ffffff?text=빨강2" alt="빨강2 버튼">
     </div>
   </div>
-  
+
+  <!-- 팝업 설명 -->
+  <div class="overlay" id="overlay" onclick="hidePopup()"></div>
   <div class="popup" id="popup">
-    <p>이것은 설명 창입니다!<br>버튼을 눌러 나타났어요.</p>
+    <p id="popup-text">이것은 설명입니다.</p>
   </div>
 
-  <div class="overlay" id="overlay" onclick="hidePopup()"></div>
-
+  <!-- 필터 기능 -->
   <script>
     function filterButtons(tag) {
       const buttons = document.querySelectorAll('.image-button');
@@ -130,8 +154,11 @@
       });
     }
   </script>
+
+  <!-- 팝업 기능 -->
   <script>
-    function showPopup() {
+    function showPopup(text) {
+      document.getElementById('popup-text').innerHTML = text;
       document.getElementById('popup').style.display = 'block';
       document.getElementById('overlay').style.display = 'block';
     }
