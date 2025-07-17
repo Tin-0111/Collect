@@ -97,7 +97,7 @@
 
   <!-- 이미지 버튼 목록 -->
   <div class="button-grid">
-    <div class="image-button" data-tag="빨강">
+    <div class="image-button" onclick="showPopup()" data-tag="빨강">
       <img src="https://via.placeholder.com/180x180/ff4444/ffffff?text=빨강" alt="빨강 버튼">
     </div>
     <div class="image-button" data-tag="파랑">
@@ -110,6 +110,12 @@
       <img src="https://via.placeholder.com/180x180/cc0000/ffffff?text=빨강2" alt="빨강2 버튼">
     </div>
   </div>
+  
+  <div class="popup" id="popup">
+    <p>이것은 설명 창입니다!<br>버튼을 눌러 나타났어요.</p>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="hidePopup()"></div>
 
   <script>
     function filterButtons(tag) {
@@ -122,6 +128,17 @@
           btn.classList.add('hidden');
         }
       });
+    }
+  </script>
+  <script>
+    function showPopup() {
+      document.getElementById('popup').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    }
+
+    function hidePopup() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
     }
   </script>
 
