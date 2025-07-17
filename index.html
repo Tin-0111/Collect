@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>두 개의 이미지 버튼</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f2f2f2;
+      font-family: sans-serif;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 40px;
+    }
+
+    .image-button {
+      display: block;
+      width: 150px;
+      height: 150px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 3px solid #ccc;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .image-button:hover {
+      transform: scale(1.05);
+      border-color: #888;
+    }
+
+    .image-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="button-container">
+    <a href="https://example.com/link1" class="image-button">
+      <img src="https://via.placeholder.com/150x150.png?text=버튼1" alt="버튼1">
+    </a>
+    <a href="https://example.com/link2" class="image-button">
+      <img src="https://via.placeholder.com/150x150.png?text=버튼2" alt="버튼2">
+    </a>
+  </div>
+
+</body>
+</html>
