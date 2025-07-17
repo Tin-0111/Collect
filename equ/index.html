@@ -1,210 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Popup UI with Filter</title>
+  <meta charset="UTF-8">
+  <title>중복 태그 필터</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #2c2c2c;
-      color: #fff;
       margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 40px;
+      text-align: center;
     }
 
     .back-button {
       position: fixed;
-      top: 10px;
-      left: 10px;
-      background-color: #666;
+      top: 20px;
+      left: 20px;
+      background-color: #555;
+      color: white;
+      padding: 10px 16px;
+      font-size: 14px;
       border: none;
       border-radius: 8px;
-      padding: 6px 12px;
-      color: white;
       cursor: pointer;
+      z-index: 999;
     }
 
-    .filter-container {
-      margin: 80px 0 20px 0;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
+    .back-button:hover {
+      background-color: #333;
     }
 
-    .filter-button {
-      background-color: #555;
-      border: none;
-      border-radius: 10px;
+    .category-buttons {
+      margin-bottom: 30px;
+    }
+
+    .category-buttons button {
+      margin: 0 10px;
       padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      background-color: #ddd;
       cursor: pointer;
-      color: #fff;
+      transition: background-color 0.2s ease;
     }
 
-    .filter-button.active {
-      background-color: #ff5b5b;
+    .category-buttons button.selected {
+      background-color: #888;
+      color: white;
     }
 
-    .button-container {
+    .button-grid {
       display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
       justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
     }
 
     .image-button {
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-      border-radius: 16px;
+      width: 180px;
+      height: 180px;
+      border-radius: 20px;
       overflow: hidden;
-      width: 120px;
-      height: 120px;
+      border: 3px solid #bbb;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .image-button:hover {
+      transform: scale(1.05);
     }
 
     .image-button img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 16px;
+    }
+
+    .hidden {
+      display: none;
     }
 
     .popup {
-      display: none;
       position: fixed;
-      top: 20%;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      background-color: #444;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      background-color: white;
       padding: 20px;
-      border-radius: 12px;
-      max-width: 400px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      z-index: 1000;
+      display: none;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0,0,0,0.5);
+      display: none;
       z-index: 999;
     }
-
-    .popup img {
-      display: block;
-      width: 50px;
-      margin: 0 auto 20px auto;
-    }
-
-    .card {
-      background-color: #5c5c5c;
-      border-radius: 8px;
-      padding: 10px 15px;
-      margin-bottom: 10px;
-    }
-
-    .stars {
-      margin-bottom: 5px;
-    }
-
-    .stars span {
-      font-size: 20px;
-    }
-
-    .title {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .description {
-      font-size: 14px;
-      line-height: 1.4;
-    }
-
-    .yellow { color: gold; }
-    .red { color: #ff5b5b; }
-    .gray { color: #777; }
   </style>
 </head>
 <body>
 
-  <button class="back-button" onclick="history.back()">← Back</button>
+  <button class="back-button" onclick="history.back()">← 뒤로가기</button>
 
-  <div class="filter-container">
-    <button class="filter-button" data-tag="all" onclick="filterButtons('all')">전체</button>
-    <button class="filter-button" data-tag="red" onclick="filterButtons('red')">빨강</button>
-    <button class="filter-button" data-tag="yellow" onclick="filterButtons('yellow')">노랑</button>
+  <!-- ✅ 중복 필터 버튼 -->
+  <div class="category-buttons">
+    <button onclick="toggleTag('빨강')" id="tag-빨강">빨강</button>
+    <button onclick="toggleTag('파랑')" id="tag-파랑">파랑</button>
+    <button onclick="toggleTag('초록')" id="tag-초록">초록</button>
+    <button onclick="clearTags()">초기화</button>
   </div>
 
-  <div class="button-container">
-    <button class="image-button" data-tags="red" onclick="showPopup(0)">
-      <img src="https://cdn-icons-png.flaticon.com/512/8096/8096947.png" alt="Item1">
-    </button>
-    <button class="image-button" data-tags="yellow" onclick="showPopup(1)">
-      <img src="https://cdn-icons-png.flaticon.com/512/8096/8096947.png" alt="Item2">
-    </button>
+  <!-- 이미지 버튼 -->
+  <div class="button-grid">
+    <div class="image-button" onclick="showPopup('이건 빨강입니다!')" data-tag="빨강">
+      <img src="https://via.placeholder.com/180x180/ff4444/ffffff?text=빨강" alt="빨강 버튼">
+    </div>
+    <div class="image-button" onclick="showPopup('이건 파랑입니다!')" data-tag="파랑">
+      <img src="https://via.placeholder.com/180x180/448aff/ffffff?text=파랑" alt="파랑 버튼">
+    </div>
+    <div class="image-button" onclick="showPopup('이건 초록입니다!')" data-tag="초록">
+      <img src="https://via.placeholder.com/180x180/44ff44/ffffff?text=초록" alt="초록 버튼">
+    </div>
+    <div class="image-button" onclick="showPopup('이건 또 다른 빨강입니다!')" data-tag="빨강">
+      <img src="https://via.placeholder.com/180x180/cc0000/ffffff?text=빨강2" alt="빨강2 버튼">
+    </div>
   </div>
 
+  <!-- 팝업 -->
+  <div class="overlay" id="overlay" onclick="hidePopup()"></div>
   <div class="popup" id="popup">
-    <img src="https://cdn-icons-png.flaticon.com/512/8096/8096947.png" alt="Icon" />
-    <div id="popup-content"></div>
+    <p id="popup-text">이것은 설명입니다.</p>
   </div>
 
+  <!-- ✅ 스크립트 -->
   <script>
-    const popups = [
-      `
-      <div class="card">
-        <div class="stars"><span class="yellow">★☆☆☆☆</span></div>
-        <div class="title">Sword of Disorder ATK +3%</div>
-      </div>
-      <div class="card">
-        <div class="stars"><span class="red">★★★☆☆</span></div>
-        <div class="title">Crit Damage +10%</div>
-      </div>
-      `,
-      `
-      <div class="card">
-        <div class="stars"><span class="yellow">★★★☆☆</span></div>
-        <div class="title">Better quality skill boosted</div>
-        <div class="description">All skill damage +15%+10%</div>
-      </div>
-      <div class="card">
-        <div class="stars"><span class="yellow">★★★★★</span></div>
-        <div class="title">Excellent quality skill boosted</div>
-        <div class="description">
-          Shackle: Souls of enemies hit by Sword of Disorder will be shackled. The more souls shackled, the higher the skill damage added (Max 30%+20%). Soul dissipates on hit
-        </div>
-      </div>
-      <div class="card">
-        <div class="stars"><span class="red">★★★★★</span></div>
-        <div class="title">Legend quality skill boosted</div>
-        <div class="description">
-          Soul Blast: Only reduce 100 souls and whole screen takes high damage when souls dissipate. Damage is proportionate to number of souls (does not trigger &lt;100 souls). Full screen damage +60%
-        </div>
-      </div>
-      `
-    ];
+    const selectedTags = new Set();
 
-    function showPopup(index) {
-      document.getElementById('popup-content').innerHTML = popups[index];
-      document.getElementById('popup').style.display = 'block';
+    function toggleTag(tag) {
+      const btn = document.getElementById(`tag-${tag}`);
+      if (selectedTags.has(tag)) {
+        selectedTags.delete(tag);
+        btn.classList.remove('selected');
+      } else {
+        selectedTags.add(tag);
+        btn.classList.add('selected');
+      }
+      updateVisibility();
     }
 
-    function filterButtons(tag) {
-      document.querySelectorAll('.filter-button').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tag === tag);
+    function clearTags() {
+      selectedTags.clear();
+      document.querySelectorAll('.category-buttons button').forEach(btn => {
+        btn.classList.remove('selected');
       });
+      updateVisibility();
+    }
 
-      document.querySelectorAll('.image-button').forEach(btn => {
-        const tags = btn.dataset.tags.split(',');
-        if (tag === 'all' || tags.includes(tag)) {
-          btn.style.display = 'inline-block';
+    function updateVisibility() {
+      const buttons = document.querySelectorAll('.image-button');
+      buttons.forEach(btn => {
+        const tag = btn.getAttribute('data-tag');
+        if (selectedTags.size === 0 || selectedTags.has(tag)) {
+          btn.classList.remove('hidden');
         } else {
-          btn.style.display = 'none';
+          btn.classList.add('hidden');
         }
       });
-
-      document.getElementById('popup').style.display = 'none';
     }
 
-    // 초기 전체 활성화
-    filterButtons('all');
+    function showPopup(text) {
+      document.getElementById('popup-text').innerHTML = text;
+      document.getElementById('popup').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    }
+
+    function hidePopup() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
   </script>
 
 </body>
