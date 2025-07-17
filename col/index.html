@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>설정된 버튼 표시 팝업</title>
+  <style>
+    .button-box {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 100px;
+    }
+
+    .img-button {
+      width: 100px;
+      height: 100px;
+      border-radius: 16px;
+      border: none;
+      background-size: cover;
+      cursor: pointer;
+    }
+
+    #popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .popup-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .popup-image {
+      width: 200px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: #eee;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="button-box" id="main-buttons">
+  <!-- 버튼들 위치 -->
+</div>
+
+<div id="popup">
+  <div class="popup-content">
+    <button class="popup-close" onclick="closePopup()">←</button>
+    <img class="popup-image" id="popupImage" src="">
+    <div class="popup-buttons" id="popupButtons">
+      <!-- 팝업 내 버튼들 -->
+    </div>
+  </div>
+</div>
+
+<script>
+  const buttonsData = [
+    { id: "A", img: "https://via.placeholder.com/100/FF0000/FFFFFF?text=A", shows: ["B", "C"] },
+    { id: "B", img: "https://via.placeholder.com/100/0000FF/FFFFFF?text=B", shows: ["A"] },
+    { id: "C", img: "https://via.placeholder.com/100/00FF00/FFFFFF?text=C", shows: ["A", "B", "D"] },
+    { id: "D", img: "https://via.placeholder.com/100/888888/FFFFFF?text=D", shows: ["C"] }
+  ];
+
+  const mainButtonsContainer = document.getElementById("main-buttons");
+  const popup = document.getElementById("popup");
+  const popupImage = document.getElementById("popupImage");
+  const popupButtons = document.getElementById("popupButtons");
+
+  function createButton(button) {
+    const btn = document.createElement("button");
+    btn.className = "img-button";
+    btn.style.backgroundImage = `url(${button.img})`;
+    btn.onclick = () => openPopup(button.id);
+    return btn;
+  }
+
+  function showMainButtons() {
+    mainButtonsContainer.innerHTML = "";
+    buttonsData.forEach(btn => {
+      mainButtonsContainer.appendChild(createButton(btn));
+    });
+  }
+
+  function openPopup(currentId) {
+    const current = buttonsData.find(b => b.id === currentId);
+    popupImage.src = current.img;
+    popupButtons.innerHTML = "";
+
+    current.shows.forEach(showId => {
+      const btnData = buttonsData.find(b => b.id === showId);
+      if (btnData) {
+        const newBtn = createButton(btnData);
+        popupButtons.appendChild(newBtn);
+      }
+    });
+
+    popup.style.display = "flex";
+  }
+
+  function closePopup() {
+    popup.style.display = "none";
+  }
+
+  showMainButtons();
+</script>
+
+</body>
+</html>
