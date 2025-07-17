@@ -2,24 +2,67 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>설명 팝업 사이트</title>
+  <title>태그 필터 + 뒤로가기 버튼</title>
   <style>
     body {
       margin: 0;
-      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 40px;
+      text-align: center;
+    }
+
+    /* 뒤로가기 버튼 */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #555;
+      color: white;
+      padding: 10px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 999;
+    }
+
+    .back-button:hover {
+      background-color: #333;
+    }
+
+    .category-buttons {
+      margin-bottom: 30px;
+    }
+
+    .category-buttons button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      background-color: #ddd;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .category-buttons button:hover {
+      background-color: #bbb;
+    }
+
+    .button-grid {
       display: flex;
       justify-content: center;
-      align-items: center;
-      background: #f9f9f9;
-      font-family: Arial, sans-serif;
+      flex-wrap: wrap;
+      gap: 30px;
     }
 
     .image-button {
       width: 180px;
       height: 180px;
       border-radius: 20px;
-      border: 3px solid #bbb;
       overflow: hidden;
+      border: 3px solid #bbb;
       cursor: pointer;
       transition: transform 0.2s ease;
     }
@@ -34,60 +77,51 @@
       object-fit: cover;
     }
 
-    .popup {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 300px;
-      padding: 20px;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    .hidden {
       display: none;
-      z-index: 100;
-    }
-
-    .popup p {
-      margin: 0;
-      font-size: 16px;
-      text-align: center;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.4);
-      display: none;
-      z-index: 99;
     }
   </style>
 </head>
 <body>
 
-  <!-- 이미지 버튼 -->
-  <div class="image-button" onclick="showPopup()">
-    <img src="https://via.placeholder.com/180x180.png?text=클릭" alt="버튼">
+  <!-- 🔙 뒤로가기 버튼 -->
+  <button class="back-button" onclick="history.back()">← 뒤로가기</button>
+
+  <!-- 카테고리 필터 버튼 -->
+  <div class="category-buttons">
+    <button onclick="filterButtons('all')">전체</button>
+    <button onclick="filterButtons('빨강')">빨강</button>
+    <button onclick="filterButtons('파랑')">파랑</button>
+    <button onclick="filterButtons('초록')">초록</button>
   </div>
 
-  <!-- 어두운 배경 -->
-  <div class="overlay" id="overlay" onclick="hidePopup()"></div>
-
-  <!-- 팝업 창 -->
-  <div class="popup" id="popup">
-    <p>이것은 설명 창입니다!<br>버튼을 눌러 나타났어요.</p>
+  <!-- 이미지 버튼 목록 -->
+  <div class="button-grid">
+    <div class="image-button" data-tag="빨강">
+      <img src="https://via.placeholder.com/180x180/ff4444/ffffff?text=빨강" alt="빨강 버튼">
+    </div>
+    <div class="image-button" data-tag="파랑">
+      <img src="https://via.placeholder.com/180x180/448aff/ffffff?text=파랑" alt="파랑 버튼">
+    </div>
+    <div class="image-button" data-tag="초록">
+      <img src="https://via.placeholder.com/180x180/44ff44/ffffff?text=초록" alt="초록 버튼">
+    </div>
+    <div class="image-button" data-tag="빨강">
+      <img src="https://via.placeholder.com/180x180/cc0000/ffffff?text=빨강2" alt="빨강2 버튼">
+    </div>
   </div>
 
   <script>
-    function showPopup() {
-      document.getElementById('popup').style.display = 'block';
-      document.getElementById('overlay').style.display = 'block';
-    }
-
-    function hidePopup() {
-      document.getElementById('popup').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
+    function filterButtons(tag) {
+      const buttons = document.querySelectorAll('.image-button');
+      buttons.forEach(btn => {
+        const btnTag = btn.getAttribute('data-tag');
+        if (tag === 'all' || btnTag === tag) {
+          btn.classList.remove('hidden');
+        } else {
+          btn.classList.add('hidden');
+        }
+      });
     }
   </script>
 
